@@ -1,67 +1,78 @@
 <?php
 include 'db_connect.php';
 
+/* جلب التصنيفات */
+$cats = mysqli_query($conn,"SELECT * FROM categories");
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
 
-    // معالجة رفع الصورة
-    $image_path = NULL;
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $upload_dir = "uploads/";
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-        $image_path = $upload_dir . time() . '_' . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
-    }
+$name = mysqli_real_escape_string($conn,$_POST['name']);
+$email = mysqli_real_escape_string($conn,$_POST['email']);
+$phone = mysqli_real_escape_string($conn,$_POST['phone']);
+$cat   = intval($_POST['category_id']);
 
-    $sql = "INSERT INTO contacts1 (name, email, phone, image_path) VALUES ('$name', '$email', '$phone', '$image_path')";
+$image_path = NULL;
 
-    if (mysqli_query($conn, $sql)) {
-        header("Location: index.php");
-        exit();
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
+if ($_FILES['image']['error']==0){
+    if(!is_dir("uploads")) mkdir("uploads");
+    $filename = time().'_'.basename($_FILES['image']['name']);
+    $image_path = "uploads/".$filename;
+    move_uploaded_file($_FILES['image']['tmp_name'],$image_path);
+}
+
+$sql = "INSERT INTO contacts1
+(name,email,phone,image_path,category_id)
+VALUES
+('$name','$email','$phone','$image_path','$cat')";
+
+mysqli_query($conn,$sql);
+header("Location:index.php");
+exit();
 }
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add New Contact</title>
-    <style>
-        form { width: 300px; margin: 50px auto; }
-        label { display: block; margin-top: 10px; }
-        input { width: 100%; padding: 5px; }
-        button { margin-top: 15px; padding: 5px 10px; }
-    </style>
+<title>Add Contact</title>
+<style>
+form{width:320px;margin:40px auto;}
+label{display:block;margin-top:10px;}
+input,select{width:100%;padding:6px;}
+</style>
 </head>
+
 <body>
 
-<h2 style="text-align:center;">Add New Contact</h2>
+<h2 style="text-align:center;">Add Contact</h2>
 
-<form method="post" action="add_contact.php" enctype="multipart/form-data">
-    <label>Name:</label>
-    <input type="text" name="name" required>
+<form method="post" enctype="multipart/form-data">
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
+<label>Name</label>
+<input name="name" required>
 
-    <label>Phone:</label>
-    <input type="text" name="phone" required>
+<label>Email</label>
+<input name="email" type="email" required>
 
-    <label>Image:</label>
-    <input type="file" name="image">
+<label>Phone</label>
+<input name="phone" required>
 
-    <button type="submit">Save Contact</button>
+<label>Category</label>
+<select name="category_id" required>
+<?php while($c=mysqli_fetch_assoc($cats)): ?>
+<option value="<?= $c['category_id'] ?>">
+<?= $c['category_name'] ?>
+</option>
+<?php endwhile; ?>
+</select>
+
+<label>Image</label>
+<input type="file" name="image" accept="image/*">
+
+<br><br>
+<button>Save Contact</button>
+
 </form>
-
-<div style="text-align:center; margin-top:20px;">
-    <a href="index.php">Back to Contacts List</a>
-</div>
 
 </body>
 </html>
