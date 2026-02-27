@@ -8,45 +8,91 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-// جلب بيانات جهة الاتصال الحالية
-$sql = "SELECT * FROM contacts1 WHERE id = $id";
-$result = mysqli_query($conn, $sql);
+/* Get categories */
+$cats = mysqli_query($conn, "SELECT * FROM categories");
 
-if (mysqli_num_rows($result) == 0) {
-    echo "Contact not found";
-    exit();
+/* Get contact using Prepared Statement */
+$stmt = $conn->prepare("SELECT * FROM contacts1 WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 0) {
+    die("Contact not found");
 }
 
-$contact = mysqli_fetch_assoc($result);
+$contact = $result->fetch_assoc();
+$stmt->close();
 
-// عند ضغط زر Save
+$errors = [];
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
 
-    // رفع الصورة الجديدة إذا اختار المستخدم صورة
-    $image_path = $contact['image_path']; // يبقي الصورة القديمة إذا لم يتم رفع صورة جديدة
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $uploads_dir = 'uploads';
-        if (!is_dir($uploads_dir)) {
-            mkdir($uploads_dir, 0777, true);
-        }
-        $tmp_name = $_FILES['image']['tmp_name'];
-        $filename = time() . '_' . basename($_FILES['image']['name']);
-        $destination = $uploads_dir . '/' . $filename;
-        if (move_uploaded_file($tmp_name, $destination)) {
-            $image_path = $destination;
-        }
+    $name  = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $cat   = intval($_POST['category_id']);
+
+    /* Validation */
+    if (empty($name)) {
+        $errors[] = "Name is required.";
     }
 
-    $update_sql = "UPDATE contacts1 SET name='$name', email='$email', phone='$phone', image_path='$image_path' WHERE id=$id";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
+    }
 
-    if (mysqli_query($conn, $update_sql)) {
+    if (empty($phone)) {
+        $errors[] = "Phone is required.";
+    }
+
+    if (empty($errors)) {
+
+        $image_path = $contact['image_path'];
+
+        /* Image Upload */
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+
+            $allowed = ['jpg','jpeg','png','gif'];
+            $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+
+            if (in_array($ext,$allowed)) {
+
+                if (!is_dir("uploads")) {
+                    mkdir("uploads");
+                }
+
+                $filename = time().'_'.basename($_FILES['image']['name']);
+                $destination = "uploads/".$filename;
+
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                    $image_path = $destination;
+                }
+            }
+        }
+
+        /* Update using Prepared Statement */
+        $update = $conn->prepare("
+            UPDATE contacts1
+            SET name=?, email=?, phone=?, category_id=?, image_path=?
+            WHERE id=?
+        ");
+
+        $update->bind_param(
+            "sssisi",
+            $name,
+            $email,
+            $phone,
+            $cat,
+            $image_path,
+            $id
+        );
+
+        $update->execute();
+        $update->close();
+
         header("Location: index.php");
         exit();
-    } else {
-        echo "Error: " . mysqli_error($conn);
     }
 }
 ?>
@@ -54,41 +100,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Contact</title>
-    <style>
-        form { width: 300px; margin: 50px auto; }
-        label { display: block; margin-top: 10px; }
-        input { width: 100%; padding: 5px; }
-        button { margin-top: 15px; padding: 5px 10px; }
-        img { max-width: 100px; max-height: 100px; object-fit: cover; margin-top: 10px; }
-    </style>
+<title>Edit Contact</title>
+<style>
+form{width:320px;margin:40px auto;}
+label{display:block;margin-top:10px;}
+input,select{width:100%;padding:6px;}
+img{max-width:100px;margin-top:10px;}
+.error{color:red;text-align:center;}
+</style>
 </head>
+
 <body>
 
 <h2 style="text-align:center;">Edit Contact</h2>
 
-<form method="post" action="edit_contact.php?id=<?php echo $contact['id']; ?>" enctype="multipart/form-data">
-    <label>Name:</label>
-    <input type="text" name="name" value="<?php echo $contact['name']; ?>" required>
-
-    <label>Email:</label>
-    <input type="email" name="email" value="<?php echo $contact['email']; ?>" required>
-
-    <label>Phone:</label>
-    <input type="text" name="phone" value="<?php echo $contact['phone']; ?>" required>
-
-    <label>Image:</label>
-    <?php if (!empty($contact['image_path'])): ?>
-        <img src="<?php echo $contact['image_path']; ?>" alt="Contact Image">
-    <?php endif; ?>
-    <input type="file" name="image">
-
-    <button type="submit">Save Changes</button>
-</form>
-
-<div style="text-align:center; margin-top:20px;">
-    <a href="index.php">Back to Contacts List</a>
+<?php if(!empty($errors)): ?>
+<div class="error">
+<?php foreach($errors as $e): ?>
+<p><?= $e ?></p>
+<?php endforeach; ?>
 </div>
+<?php endif; ?>
+
+<form method="post" enctype="multipart/form-data">
+
+<label>Name</label>
+<input name="name" value="<?= htmlspecialchars($contact['name']) ?>" required>
+
+<label>Email</label>
+<input name="email" type="email" value="<?= htmlspecialchars($contact['email']) ?>" required>
+
+<label>Phone</label>
+<input name="phone" value="<?= htmlspecialchars($contact['phone']) ?>" required>
+
+<label>Category</label>
+<select name="category_id" required>
+<?php while($c=mysqli_fetch_assoc($cats)): ?>
+<option value="<?= $c['category_id'] ?>"
+<?= $contact['category_id']==$c['category_id']?'selected':'' ?>>
+<?= $c['category_name'] ?>
+</option>
+<?php endwhile; ?>
+</select>
+
+<label>Image</label>
+<?php if($contact['image_path']): ?>
+<img src="<?= $contact['image_path'] ?>">
+<?php endif; ?>
+<input type="file" name="image" accept="image/*">
+
+<br><br>
+<button>Save Changes</button>
+
+</form>
 
 </body>
 </html>
