@@ -8,12 +8,30 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-$sql = "DELETE FROM contacts1 WHERE id = $id";
+/* Get image path first */
+$stmt = $conn->prepare("SELECT image_path FROM contacts1 WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if (mysqli_query($conn, $sql)) {
-    header("Location: index.php");
-    exit();
-} else {
-    echo "Error deleting contact: " . mysqli_error($conn);
+if ($row = $result->fetch_assoc()) {
+
+    $image = $row['image_path'];
+
+    /* Delete image from server if exists */
+    if (!empty($image) && file_exists($image)) {
+        unlink($image);
+    }
 }
+
+$stmt->close();
+
+/* Delete contact from database */
+$delete = $conn->prepare("DELETE FROM contacts1 WHERE id = ?");
+$delete->bind_param("i", $id);
+$delete->execute();
+$delete->close();
+
+header("Location: index.php");
+exit();
 ?>

@@ -50,7 +50,7 @@ $count_stmt->close();
 
 $total_pages = ceil($total_rows / $limit);
 
-/* جلب البيانات مع Pagination */
+/* جلب البيانات */
 $sql = "
 SELECT contacts1.*, categories.category_name
 FROM contacts1
@@ -78,59 +78,164 @@ $catlist = mysqli_query($conn,"SELECT * FROM categories");
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Contact Manager</title>
+
 <style>
-body{font-family:Arial;background:#fafafa;}
-table{border-collapse:collapse;width:90%;margin:auto;background:white;}
-th,td{border:1px solid #ddd;padding:10px;}
-th{background:#f2f2f2;}
-tr:hover{background:#f9f9f9;}
-img{width:55px;height:55px;object-fit:cover;border-radius:6px;}
-.topbar{text-align:center;margin:15px;}
-input,select{padding:6px;}
-.pagination{text-align:center;margin:20px;}
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+margin:0;
+}
+
+h2{
+text-align:center;
+margin-top:25px;
+}
+
+.topbar{
+text-align:center;
+margin:20px;
+}
+
+.topbar a{
+background:#3498db;
+color:white;
+padding:10px 15px;
+border-radius:6px;
+text-decoration:none;
+font-weight:bold;
+margin:5px;
+}
+
+.topbar a:hover{
+background:#2980b9;
+}
+
+form{
+display:inline-block;
+}
+
+input,select{
+padding:7px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+padding:7px 12px;
+background:#27ae60;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e8449;
+}
+
+table{
+border-collapse:collapse;
+width:90%;
+margin:auto;
+background:white;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+th,td{
+border:1px solid #eee;
+padding:12px;
+text-align:left;
+}
+
+th{
+background:#2c3e50;
+color:white;
+}
+
+tr:hover{
+background:#f9f9f9;
+}
+
+img{
+width:55px;
+height:55px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.pagination{
+text-align:center;
+margin:25px;
+}
+
 .pagination a{
 padding:8px 12px;
 border:1px solid #ccc;
-margin:2px;
+margin:3px;
 text-decoration:none;
 color:black;
+border-radius:4px;
 }
+
 .pagination a.active{
-background:#333;
+background:#2c3e50;
 color:white;
 }
+
 </style>
+
 </head>
+
 <body>
 
-<h2 style="text-align:center;">Contact Manager</h2>
+<h2>Contact Manager</h2>
 
 <div class="topbar">
-<a href="add_contact.php">➕ Add Contact</a>
+
+<a href="dashboard.php">Dashboard</a>
+
+<a href="add_contact.php">Add Contact</a>
+
+<a href="export_contacts.php">Export CSV</a>
+
 </div>
 
 <div class="topbar">
+
 <form>
+
 <input name="search"
 placeholder="Search..."
 value="<?= htmlspecialchars($search) ?>">
 
 <select name="cat">
+
 <option value="">All Categories</option>
+
 <?php while($c=mysqli_fetch_assoc($catlist)): ?>
+
 <option value="<?= $c['category_id'] ?>"
 <?= $catfilter==$c['category_id']?'selected':'' ?>>
+
 <?= $c['category_name'] ?>
+
 </option>
+
 <?php endwhile; ?>
+
 </select>
 
 <button>Apply</button>
+
 </form>
+
 </div>
 
 <table>
+
 <tr>
 <th>ID</th>
 <th>Image</th>
@@ -142,7 +247,9 @@ value="<?= htmlspecialchars($search) ?>">
 </tr>
 
 <?php while($row=$result->fetch_assoc()): ?>
+
 <tr>
+
 <td><?= $row['id'] ?></td>
 
 <td>
@@ -158,25 +265,36 @@ value="<?= htmlspecialchars($search) ?>">
 </td>
 
 <td><?= htmlspecialchars($row['email']) ?></td>
+
 <td><?= htmlspecialchars($row['phone']) ?></td>
-<td><?= $row['category_name'] ?? '—' ?></td>
+
+<td><?= $row['category_name'] ?? '-' ?></td>
 
 <td>
 <a href="edit_contact.php?id=<?= $row['id'] ?>">Edit</a> |
 <a href="delete_contact.php?id=<?= $row['id'] ?>"
 onclick="return confirm('Delete?')">Delete</a>
 </td>
+
 </tr>
+
 <?php endwhile; ?>
+
 </table>
 
 <div class="pagination">
+
 <?php for ($i=1; $i <= $total_pages; $i++): ?>
+
 <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&cat=<?= $catfilter ?>"
 class="<?= $i==$page?'active':'' ?>">
+
 <?= $i ?>
+
 </a>
+
 <?php endfor; ?>
+
 </div>
 
 </body>
