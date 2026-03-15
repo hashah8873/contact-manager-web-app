@@ -1,16 +1,18 @@
 <?php
 include 'db_connect.php';
 
-/* عدد العناصر في كل صفحة */
-$limit = 5;
+/* Get statistics */
+$total_contacts = $conn->query("SELECT COUNT(*) as total FROM contacts1")->fetch_assoc()['total'];
+$total_categories = $conn->query("SELECT COUNT(*) as total FROM categories")->fetch_assoc()['total'];
 
-/* الصفحة الحالية */
+/* Pagination */
+$limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 $offset = ($page - 1) * $limit;
 
-/* البحث والفلترة */
+/* Search & filter */
 $search = $_GET['search'] ?? '';
 $catfilter = $_GET['cat'] ?? '';
 
@@ -18,29 +20,29 @@ $where = "WHERE 1";
 $params = [];
 $types = "";
 
-/* شروط البحث */
+/* Search condition */
 if ($search) {
-    $where .= " AND (name LIKE ? OR email LIKE ? OR phone LIKE ?)";
-    $searchTerm = "%$search%";
-    $params[] = $searchTerm;
-    $params[] = $searchTerm;
-    $params[] = $searchTerm;
-    $types .= "sss";
+$where .= " AND (name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+$searchTerm = "%$search%";
+$params[] = $searchTerm;
+$params[] = $searchTerm;
+$params[] = $searchTerm;
+$types .= "sss";
 }
 
-/* فلترة حسب التصنيف */
+/* Category filter */
 if ($catfilter) {
-    $where .= " AND contacts1.category_id = ?";
-    $params[] = $catfilter;
-    $types .= "i";
+$where .= " AND contacts1.category_id = ?";
+$params[] = $catfilter;
+$types .= "i";
 }
 
-/* حساب عدد الصفحات */
+/* Count rows */
 $count_sql = "SELECT COUNT(*) as total FROM contacts1 $where";
 $count_stmt = $conn->prepare($count_sql);
 
 if ($types) {
-    $count_stmt->bind_param($types, ...$params);
+$count_stmt->bind_param($types, ...$params);
 }
 
 $count_stmt->execute();
@@ -50,7 +52,7 @@ $count_stmt->close();
 
 $total_pages = ceil($total_rows / $limit);
 
-/* جلب البيانات */
+/* Get contacts */
 $sql = "
 SELECT contacts1.*, categories.category_name
 FROM contacts1
@@ -71,15 +73,16 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
-/* قائمة التصنيفات */
+/* Categories list */
 $catlist = mysqli_query($conn,"SELECT * FROM categories");
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<title>Contact Manager</title>
+<title>Contact Manager System</title>
 
 <style>
 
@@ -111,6 +114,30 @@ margin:5px;
 
 .topbar a:hover{
 background:#2980b9;
+}
+
+/* statistics */
+
+.stats{
+display:flex;
+justify-content:center;
+gap:30px;
+margin-bottom:25px;
+}
+
+.card{
+background:white;
+padding:25px;
+width:200px;
+text-align:center;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.card h3{
+margin:0;
+font-size:32px;
+color:#3498db;
 }
 
 form{
@@ -185,13 +212,19 @@ background:#2c3e50;
 color:white;
 }
 
+footer{
+text-align:center;
+margin:30px;
+color:#777;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<h2>Contact Manager</h2>
+<h2>Contact Manager System</h2>
 
 <div class="topbar">
 
@@ -200,6 +233,20 @@ color:white;
 <a href="add_contact.php">Add Contact</a>
 
 <a href="export_contacts.php">Export CSV</a>
+
+</div>
+
+<div class="stats">
+
+<div class="card">
+<h3><?= $total_contacts ?></h3>
+<p>Total Contacts</p>
+</div>
+
+<div class="card">
+<h3><?= $total_categories ?></h3>
+<p>Total Categories</p>
+</div>
 
 </div>
 
@@ -253,15 +300,27 @@ value="<?= htmlspecialchars($search) ?>">
 <td><?= $row['id'] ?></td>
 
 <td>
-<?php if($row['image_path']): ?>
+
+<?php if(!empty($row['image_path']) && file_exists($row['image_path'])): ?>
+
 <img src="<?= $row['image_path'] ?>">
-<?php else: ?> N/A <?php endif; ?>
+
+<?php else: ?>
+
+<img src="https://via.placeholder.com/55">
+
+<?php endif; ?>
+
 </td>
 
 <td>
+
 <a href="contact.php?id=<?= $row['id'] ?>">
+
 <?= htmlspecialchars($row['name']) ?>
+
 </a>
+
 </td>
 
 <td><?= htmlspecialchars($row['email']) ?></td>
@@ -271,9 +330,14 @@ value="<?= htmlspecialchars($search) ?>">
 <td><?= $row['category_name'] ?? '-' ?></td>
 
 <td>
-<a href="edit_contact.php?id=<?= $row['id'] ?>">Edit</a> |
+
+<a href="edit_contact.php?id=<?= $row['id'] ?>">Edit</a>
+
+|
+
 <a href="delete_contact.php?id=<?= $row['id'] ?>"
 onclick="return confirm('Delete?')">Delete</a>
+
 </td>
 
 </tr>
@@ -296,6 +360,12 @@ class="<?= $i==$page?'active':'' ?>">
 <?php endfor; ?>
 
 </div>
+
+<footer>
+
+Capstone Project – Contact Manager System
+
+</footer>
 
 </body>
 </html>
