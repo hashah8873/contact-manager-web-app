@@ -8,7 +8,7 @@ if (!isset($_GET['id'])) {
 
 $id = intval($_GET['id']);
 
-/* Get image path first */
+/* Get image path */
 $stmt = $conn->prepare("SELECT image_path FROM contacts1 WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -19,12 +19,12 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $image = $row['image_path'];
 
-    /* Delete image from server if exists */
+    /* Delete image from server */
     if (!empty($image) && file_exists($image)) {
         unlink($image);
     }
 
-    /* Delete contact from database */
+    /* Delete contact */
     $delete = $conn->prepare("DELETE FROM contacts1 WHERE id = ?");
     $delete->bind_param("i", $id);
     $delete->execute();
@@ -33,7 +33,7 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 
-/* Redirect back */
-header("Location: index.php");
+/* Redirect with message */
+header("Location: index.php?msg=deleted");
 exit();
 ?>
