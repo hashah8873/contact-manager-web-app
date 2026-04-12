@@ -85,40 +85,77 @@ $catlist = mysqli_query($conn,"SELECT * FROM categories");
 
 <style>
 body{font-family:Arial;background:#f4f6f9;margin:0;}
-h2{text-align:center;margin-top:25px;}
+h2{text-align:center;margin-top:25px;color:#2c3e50;}
+
 .topbar{text-align:center;margin:20px;}
 .topbar a{
 background:#3498db;color:white;padding:10px 15px;
 border-radius:6px;text-decoration:none;font-weight:bold;margin:5px;
 }
 .topbar a:hover{background:#2980b9;}
-.stats{display:flex;justify-content:center;gap:30px;margin-bottom:25px;}
+
+.stats{
+display:flex;
+justify-content:center;
+gap:30px;
+margin-bottom:25px;
+}
+
 .card{
 background:white;padding:25px;width:200px;text-align:center;
 border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
-.card h3{margin:0;font-size:32px;color:#3498db;}
+
+.card h3{
+margin:0;font-size:32px;color:#3498db;
+}
+
 form{display:inline-block;}
-input,select{padding:7px;border:1px solid #ccc;border-radius:5px;}
+
+input,select{
+padding:7px;border:1px solid #ccc;border-radius:5px;
+}
+
 button{
 padding:7px 12px;background:#27ae60;color:white;
 border:none;border-radius:5px;cursor:pointer;
 }
 button:hover{background:#1e8449;}
+
 table{
 border-collapse:collapse;width:90%;margin:auto;background:white;
 box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
-th,td{border:1px solid #eee;padding:12px;text-align:left;}
-th{background:#2c3e50;color:white;}
-tr:hover{background:#f9f9f9;}
-img{width:55px;height:55px;object-fit:cover;border-radius:8px;}
-.pagination{text-align:center;margin:25px;}
+
+th,td{
+border:1px solid #eee;padding:12px;text-align:left;
+}
+
+th{
+background:#2c3e50;color:white;
+}
+
+tr:hover{
+background:#f9f9f9;
+}
+
+img{
+width:55px;height:55px;object-fit:cover;border-radius:8px;
+}
+
+.pagination{
+text-align:center;margin:25px;
+}
+
 .pagination a{
 padding:8px 12px;border:1px solid #ccc;margin:3px;
 text-decoration:none;color:black;border-radius:4px;
 }
-.pagination a.active{background:#2c3e50;color:white;}
+
+.pagination a.active{
+background:#2c3e50;color:white;
+}
+
 .success{
 text-align:center;
 background:#2ecc71;
@@ -128,7 +165,17 @@ margin:10px auto;
 width:50%;
 border-radius:5px;
 }
-footer{text-align:center;margin:30px;color:#777;}
+
+.empty{
+text-align:center;
+padding:20px;
+color:#777;
+font-weight:bold;
+}
+
+footer{
+text-align:center;margin:30px;color:#777;
+}
 </style>
 
 </head>
@@ -150,6 +197,7 @@ Contact deleted successfully
 </div>
 
 <div class="stats">
+
 <div class="card">
 <h3><?= $total_contacts ?></h3>
 <p>Total Contacts</p>
@@ -159,29 +207,42 @@ Contact deleted successfully
 <h3><?= $total_categories ?></h3>
 <p>Total Categories</p>
 </div>
+
 </div>
 
 <div class="topbar">
+
 <form>
-<input name="search" placeholder="Search..." value="<?= htmlspecialchars($search) ?>">
+
+<input name="search"
+placeholder="Search..."
+value="<?= htmlspecialchars($search) ?>">
 
 <select name="cat">
+
 <option value="">All Categories</option>
 
 <?php while($c=mysqli_fetch_assoc($catlist)): ?>
+
 <option value="<?= $c['category_id'] ?>"
 <?= $catfilter==$c['category_id']?'selected':'' ?>>
+
 <?= $c['category_name'] ?>
+
 </option>
+
 <?php endwhile; ?>
 
 </select>
 
 <button>Apply</button>
+
 </form>
+
 </div>
 
 <table>
+
 <tr>
 <th>ID</th>
 <th>Image</th>
@@ -192,7 +253,10 @@ Contact deleted successfully
 <th>Action</th>
 </tr>
 
+<?php if($result->num_rows > 0): ?>
+
 <?php while($row=$result->fetch_assoc()): ?>
+
 <tr>
 
 <td><?= $row['id'] ?></td>
@@ -224,21 +288,39 @@ Delete
 </td>
 
 </tr>
+
 <?php endwhile; ?>
+
+<?php else: ?>
+
+<tr>
+<td colspan="7" class="empty">
+No contacts found
+</td>
+</tr>
+
+<?php endif; ?>
 
 </table>
 
 <div class="pagination">
+
 <?php for ($i=1; $i <= $total_pages; $i++): ?>
+
 <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&cat=<?= $catfilter ?>"
 class="<?= $i==$page?'active':'' ?>">
+
 <?= $i ?>
+
 </a>
+
 <?php endfor; ?>
+
 </div>
 
 <footer>
-Capstone Project – Contact Manager System
+Contact Manager System – Capstone Project <br>
+Developed using PHP & MySQL
 </footer>
 
 </body>
