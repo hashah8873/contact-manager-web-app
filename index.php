@@ -184,10 +184,20 @@ text-align:center;margin:30px;color:#777;
 
 <h2>Contact Manager System</h2>
 
-<?php if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'): ?>
-<div class="success">
-Contact deleted successfully
-</div>
+<?php if(isset($_GET['msg'])): ?>
+
+<?php if($_GET['msg'] == 'deleted'): ?>
+<div class="success">Contact deleted successfully</div>
+<?php endif; ?>
+
+<?php if($_GET['msg'] == 'added'): ?>
+<div class="success">Contact added successfully</div>
+<?php endif; ?>
+
+<?php if($_GET['msg'] == 'updated'): ?>
+<div class="success">Contact updated successfully</div>
+<?php endif; ?>
+
 <?php endif; ?>
 
 <div class="topbar">
