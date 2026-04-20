@@ -1,0 +1,161 @@
+body {
+  font-family: Arial;
+  background: #f4f6f9;
+  margin: 0;
+}
+
+/* TITLE */
+h1 {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* BUTTONS (NO SPACE) */
+.top-buttons {
+  width: 90%;
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* نخليهم ملتصقين */
+.top-buttons button {
+  margin: 0;
+  border-radius: 0;
+}
+
+/* أول زر */
+.top-buttons button:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+/* آخر زر */
+.top-buttons button:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* BUTTON STYLE */
+button {
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  background: #3498db;
+  color: white;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+/* DELETE */
+button.delete {
+  background: #e74c3c;
+}
+
+button.delete:hover {
+  background: #c0392b;
+}
+
+/* EDIT */
+button.edit {
+  background: #2ecc71;
+}
+
+button.edit:hover {
+  background: #27ae60;
+}
+
+/* CARDS */
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.card-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 150px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* FORM */
+.form-container {
+  text-align: center;
+}
+
+/* INPUTS */
+input, select {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* SEARCH */
+.search-container {
+  width: 90%;
+  margin: 20px auto;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+/* TABLE */
+table {
+  width: 90%;
+  margin: auto;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+th {
+  background: #2c3e50;
+  color: white;
+}
+
+/* ROW HOVER */
+tr:hover {
+  background: #f9f9f9;
+}
+
+/* IMAGE */
+img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
