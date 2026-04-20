@@ -1,43 +1,121 @@
-# contact-manager-web-app
-Contact Manager Capstone Project
-# Capstone Project Proposal
+# 📌 Contact Manager Web Application
 
-## Project Title
-Contact Manager Web Application
+## 📖 Project Overview
 
-## Introduction
-The goal of this capstone project is to develop a simple Contact Manager web application that allows users to store and manage contact information in one centralized system. Many users rely on notes or multiple applications to save contact details, which can be inefficient and disorganized. This project aims to provide an easy-to-use web-based solution for managing contacts.
+This project is a **Contact Manager Web Application** developed as a capstone project.
+It allows users to manage their contacts in one centralized system instead of using multiple tools or notes.
 
-## Problem Statement
-Many users need a simple and organized way to store contact information instead of using paper notes or multiple digital tools that are not centralized.
+---
 
-## Proposed Solution
-This project will provide a web application that allows users to add, view, edit, and delete contacts. The application will use a backend built with PHP and MySQL to store contact data securely. In later phases, the frontend will be enhanced using Angular to improve interactivity and user experience.
+## 🎯 Features
 
-## Core Features
-- Add new contacts
-- View a list of contacts
-- Edit existing contacts
-- Delete contacts
+* Add new contacts
+* View all contacts
+* Edit existing contacts
+* Delete contacts
+* Upload contact images
+* Assign categories (Family, Friends, Work, etc.)
+* Search contacts (by name, email, or phone)
+* Dashboard with statistics (Total Contacts & Categories)
+* Export contacts to CSV
 
-## Technologies to be Used
-- PHP
-- MySQL
-- XAMPP
-- Git and GitHub
-- Adobe XD (for prototype design)
-- Angular (later phase)
+---
 
-## Prototype Design and Navigation
-A low-fidelity prototype of the Contact Manager web application was created using Adobe XD to visualize the layout and basic user flow. The prototype includes two main screens: a Contacts List page and an Add New Contact page.
+## 🛠 Technologies Used
 
-Users can navigate from the Contacts List page to the Add New Contact page by clicking the Add Contact button. After entering the contact information, users can return to the Contacts List page by clicking the Save button. This navigation demonstrates the intended user interaction within the application.
+### Backend:
 
-## Project Plan
-- Phase 1: Build backend using PHP and MySQL
-- Phase 2: Integrate frontend using Angular
-- Phase 3: Optional implementation using React
-- Phase 4: Testing, improvements, and final presentation
+* PHP
+* MySQL
+* XAMPP
 
-## Learning Goals
-Through this project, I aim to strengthen my backend development skills, improve my understanding of databases, and gain experience working with modern JavaScript frameworks and version control tools.
+### Frontend:
+
+* Angular
+* HTML
+* CSS
+
+### Tools:
+
+* Git & GitHub
+* Adobe XD (Prototype Design)
+
+---
+
+## 🧠 How It Works
+
+* The **frontend (Angular)** communicates with the **backend (PHP API)**.
+* The backend connects to a **MySQL database** to store and retrieve contact data.
+* Users can perform full CRUD operations (Create, Read, Update, Delete).
+* Images are uploaded and stored in the `uploads/` folder.
+
+---
+
+## ▶️ How to Run the Project (Locally)
+
+### 1. Start Backend (XAMPP)
+
+* Open XAMPP
+* Start **Apache** and **MySQL**
+* Place the project folder inside:
+
+```
+htdocs/
+```
+
+---
+
+### 2. Database Setup
+
+* Open **phpMyAdmin**
+* Create a database named:
+
+```
+contact_manager
+```
+
+* Import your database tables (contacts1, categories)
+
+---
+
+### 3. Run Angular Frontend
+
+In terminal:
+
+```
+cd contact-manager-frontend
+ng serve
+```
+
+Then open:
+
+```
+http://localhost:4200
+```
+
+---
+
+## ⚠️ Important Note
+
+This project runs fully in a **local environment** because it uses PHP and MySQL.
+
+GitHub is used to:
+
+* Showcase project structure
+* Track development progress
+* Share code
+
+---
+
+## 🚀 Future Improvements
+
+* Improve UI/UX design
+* Add pagination
+* Add authentication (login system)
+* Deploy full project online
+
+---
+
+## 👩‍💻 Author
+
+Capstone Project – Web & Mobile Development
