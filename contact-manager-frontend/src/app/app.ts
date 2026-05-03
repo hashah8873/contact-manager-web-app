@@ -15,6 +15,15 @@ export class AppComponent implements OnInit {
   categories: any[] = [];
 
   searchText: string = '';
+  selectedCategory: string = '';
+  message: string = '';
+
+  isLoggedIn: boolean = false;
+
+  loginData = {
+    email: '',
+    password: ''
+  };
 
   newContact = {
     name: '',
@@ -29,10 +38,37 @@ export class AppComponent implements OnInit {
   constructor(private service: ContactService) {}
 
   ngOnInit() {
-    this.loadContacts();
-    this.loadCategories();
+    this.isLoggedIn = !!localStorage.getItem('user');
+
+    if (this.isLoggedIn) {
+      this.loadContacts();
+      this.loadCategories();
+    }
   }
 
+  // 🔐 LOGIN
+  login() {
+    this.service.login(this.loginData).subscribe((res: any) => {
+
+      if (res.status === 'success') {
+        this.isLoggedIn = true;
+        localStorage.setItem('user', 'logged');
+
+        this.loadContacts();
+        this.loadCategories();
+      } else {
+        this.showMessage("Wrong email or password ❌");
+      }
+
+    });
+  }
+
+  logout() {
+    localStorage.removeItem('user');
+    this.isLoggedIn = false;
+  }
+
+  // DATA
   loadContacts() {
     this.service.getContacts().subscribe((res: any) => {
       this.contacts = res;
@@ -45,30 +81,35 @@ export class AppComponent implements OnInit {
     });
   }
 
+  // SEARCH + FILTER
   filteredContacts() {
     return this.contacts.filter((c: any) => {
+
       const s = this.searchText.toLowerCase();
-      return (
+
+      const matchesSearch =
         c.name?.toLowerCase().includes(s) ||
         c.email?.toLowerCase().includes(s) ||
-        c.phone?.toLowerCase().includes(s)
-      );
+        c.phone?.toLowerCase().includes(s);
+
+      const matchesCategory =
+        !this.selectedCategory ||
+        c.category_name?.trim() === this.selectedCategory;
+
+      return matchesSearch && matchesCategory;
     });
   }
 
+  // FILE
   onFileChange(event: any) {
     this.selectedFile = event.target.files[0];
   }
 
+  // ADD
   addContact() {
 
     if (this.editingId) {
       this.updateContact();
-      return;
-    }
-
-    if (!this.newContact.name || !this.newContact.email || !this.newContact.phone) {
-      alert("Fill all fields ❌");
       return;
     }
 
@@ -84,12 +125,13 @@ export class AppComponent implements OnInit {
     }
 
     this.service.addContact(formData).subscribe(() => {
-      alert("Added ✅");
+      this.showMessage("Added ✅");
       this.loadContacts();
       this.resetForm();
     });
   }
 
+  // EDIT
   editContact(c: any) {
     this.newContact = {
       name: c.name,
@@ -101,23 +143,31 @@ export class AppComponent implements OnInit {
   }
 
   updateContact() {
-
     const data = {
       id: this.editingId,
       ...this.newContact
     };
 
     this.service.updateContact(data).subscribe(() => {
-      alert("Updated ✅");
+      this.showMessage("Updated ✅");
       this.loadContacts();
       this.resetForm();
     });
   }
 
   deleteContact(id: number) {
+    if (!confirm("Delete contact?")) return;
+
     this.service.deleteContact(id).subscribe(() => {
+      this.showMessage("Deleted 🗑️");
       this.loadContacts();
     });
+  }
+
+  // UI
+  showMessage(msg: string) {
+    this.message = msg;
+    setTimeout(() => this.message = '', 3000);
   }
 
   resetForm() {
@@ -125,4 +175,10 @@ export class AppComponent implements OnInit {
     this.selectedFile = null;
     this.editingId = null;
   }
+
+  // CSV
+  exportCSV() {
+    window.open('http://localhost/contact-manager-web-app/export_contacts.php');
+  }
+
 }

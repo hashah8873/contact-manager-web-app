@@ -2,52 +2,60 @@
 
 ## 📖 Project Overview
 
-This project is a **Contact Manager Web Application** developed as a capstone project.
-It allows users to manage their contacts in one centralized system instead of using multiple tools or notes.
+This project is a **Contact Manager Web Application** developed as a capstone project.  
+It provides a centralized system that allows users to store, organize, and manage their contacts efficiently instead of using scattered tools or notes.
+
+The application combines a **frontend built with Angular** and a **backend built with PHP and MySQL** to deliver a complete full-stack solution.
 
 ---
 
-## 🎯 Features
+## 🚀 Features
 
-* Add new contacts
-* View all contacts
-* Edit existing contacts
-* Delete contacts
-* Upload contact images
-* Assign categories (Family, Friends, Work, etc.)
-* Search contacts (by name, email, or phone)
-* Dashboard with statistics (Total Contacts & Categories)
-* Export contacts to CSV
+- 🔐 User Login System (Basic Authentication)
+- ➕ Add new contacts
+- 📋 View all contacts
+- ✏️ Edit existing contacts
+- ❌ Delete contacts
+- 🖼 Upload contact images
+- 🗂 Assign categories (Family, Friends, Work, etc.)
+- 🔍 Search contacts (by name, email, or phone)
+- 📊 Dashboard with statistics (Total Contacts & Categories)
+- 📁 Export contacts to CSV
+
+---
+
+## 🔐 Demo Login
+
+Email: hiba@gmail.com  
+Password: 123123  
 
 ---
 
 ## 🛠 Technologies Used
 
 ### Backend:
-
-* PHP
-* MySQL
-* XAMPP
+- PHP
+- MySQL
+- XAMPP
 
 ### Frontend:
-
-* Angular
-* HTML
-* CSS
+- Angular
+- HTML
+- CSS
 
 ### Tools:
-
-* Git & GitHub
-* Adobe XD (Prototype Design)
+- Git & GitHub
+- Adobe XD (Prototype Design)
 
 ---
 
 ## 🧠 How It Works
 
-* The **frontend (Angular)** communicates with the **backend (PHP API)**.
-* The backend connects to a **MySQL database** to store and retrieve contact data.
-* Users can perform full CRUD operations (Create, Read, Update, Delete).
-* Images are uploaded and stored in the `uploads/` folder.
+- The **Angular frontend** sends requests to the **PHP backend (API)**.
+- The backend processes the requests and interacts with the **MySQL database**.
+- The system supports full CRUD operations (Create, Read, Update, Delete).
+- Uploaded images are stored in the `uploads/` directory.
+- The login system controls access to the application.
 
 ---
 
@@ -55,64 +63,68 @@ It allows users to manage their contacts in one centralized system instead of us
 
 ### 1. Start Backend (XAMPP)
 
-* Open XAMPP
-* Start **Apache** and **MySQL**
-* Place the project folder inside:
+- Open XAMPP
+- Start **Apache** and **MySQL**
+- Place the project folder inside:
 
-```
-htdocs/
-```
+htdocs/contact-manager-web-app
 
 ---
 
 ### 2. Database Setup
 
-* Open **phpMyAdmin**
-* Create a database named:
+- Open **phpMyAdmin**
+- Create a database named:
 
-```
 contact_manager
-```
 
-* Import your database tables (contacts1, categories)
+- Import the following tables:
+  - contacts1
+  - categories
 
 ---
 
 ### 3. Run Angular Frontend
 
-In terminal:
+Open terminal and run:
 
-```
-cd contact-manager-frontend
-ng serve
-```
+cd contact-manager-frontend  
+npm install  
+ng serve  
 
-Then open:
+Then open in your browser:
 
-```
 http://localhost:4200
-```
 
 ---
 
-## ⚠️ Important Note
+## 📌 Project Status (Weekly Progress)
 
-This project runs fully in a **local environment** because it uses PHP and MySQL.
+### ✅ Completed
+- Backend development (PHP + MySQL)
+- Angular frontend integration
+- Full CRUD functionality
+- Search functionality
+- Image upload system
+- Categories management
+- Login system (basic authentication)
+- Dashboard with statistics
 
-GitHub is used to:
-
-* Showcase project structure
-* Track development progress
-* Share code
+### 🔄 Next Steps
+- Improve UI/UX design
+- Add better validation
+- Enhance export functionality
+- Deploy the project online
 
 ---
 
-## 🚀 Future Improvements
+## ⚠️ Important Notes
 
-* Improve UI/UX design
-* Add pagination
-* Add authentication (login system)
-* Deploy full project online
+- This project currently runs in a **local environment** using XAMPP.
+- GitHub is used to:
+  - Showcase the project structure
+  - Track development progress
+  - Share code with instructors
 
 ---
 

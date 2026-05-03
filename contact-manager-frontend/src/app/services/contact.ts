@@ -27,4 +27,8 @@ export class ContactService {
   deleteContact(id: number) {
     return this.http.get(this.api + '/api_delete_contact.php?id=' + id);
   }
+
+  login(data: any) {
+    return this.http.post(this.api + '/login.php', data);
+  }
 }
