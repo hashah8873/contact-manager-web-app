@@ -38,6 +38,7 @@ export class AppComponent implements OnInit {
   constructor(private service: ContactService) {}
 
   ngOnInit() {
+
     this.isLoggedIn = !!localStorage.getItem('user');
 
     if (this.isLoggedIn) {
@@ -46,21 +47,33 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // 🔐 LOGIN
+  // ================= LOGIN =================
+
   login() {
+
+    if (!this.loginData.email || !this.loginData.password) {
+      this.showMessage("Fill login fields ❌");
+      return;
+    }
+
     this.service.login(this.loginData).subscribe((res: any) => {
 
       if (res.status === 'success') {
+
         this.isLoggedIn = true;
         localStorage.setItem('user', 'logged');
 
         this.loadContacts();
         this.loadCategories();
+
+        this.showMessage("Login Successful ✅");
+
       } else {
         this.showMessage("Wrong email or password ❌");
       }
 
     });
+
   }
 
   logout() {
@@ -68,7 +81,8 @@ export class AppComponent implements OnInit {
     this.isLoggedIn = false;
   }
 
-  // DATA
+  // ================= LOAD DATA =================
+
   loadContacts() {
     this.service.getContacts().subscribe((res: any) => {
       this.contacts = res;
@@ -81,8 +95,10 @@ export class AppComponent implements OnInit {
     });
   }
 
-  // SEARCH + FILTER
+  // ================= SEARCH + FILTER =================
+
   filteredContacts() {
+
     return this.contacts.filter((c: any) => {
 
       const s = this.searchText.toLowerCase();
@@ -97,16 +113,57 @@ export class AppComponent implements OnInit {
         c.category_name?.trim() === this.selectedCategory;
 
       return matchesSearch && matchesCategory;
+
     });
+
   }
 
-  // FILE
+  // ================= FILE =================
+
   onFileChange(event: any) {
     this.selectedFile = event.target.files[0];
   }
 
-  // ADD
+  // ================= VALIDATION =================
+
+  validateForm(): boolean {
+
+    // Empty fields
+    if (
+      !this.newContact.name ||
+      !this.newContact.email ||
+      !this.newContact.phone ||
+      !this.newContact.category_id
+    ) {
+
+      this.showMessage("All fields are required ❌");
+      return false;
+    }
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(this.newContact.email)) {
+      this.showMessage("Invalid email format ❌");
+      return false;
+    }
+
+    // Phone validation
+    const phonePattern = /^[0-9]+$/;
+
+    if (!phonePattern.test(this.newContact.phone)) {
+      this.showMessage("Phone must contain numbers only ❌");
+      return false;
+    }
+
+    return true;
+  }
+
+  // ================= ADD CONTACT =================
+
   addContact() {
+
+    if (!this.validateForm()) return;
 
     if (this.editingId) {
       this.updateContact();
@@ -125,60 +182,140 @@ export class AppComponent implements OnInit {
     }
 
     this.service.addContact(formData).subscribe(() => {
-      this.showMessage("Added ✅");
+
+      this.showMessage("Contact Added Successfully ✅");
+
       this.loadContacts();
       this.resetForm();
+
     });
+
   }
 
-  // EDIT
+  // ================= EDIT =================
+
   editContact(c: any) {
+
     this.newContact = {
       name: c.name,
       email: c.email,
       phone: c.phone,
       category_id: c.category_id
     };
+
     this.editingId = c.id;
+
+    this.showMessage("Editing Contact ✏️");
   }
 
+  // ================= UPDATE =================
+
   updateContact() {
+
+    if (!this.validateForm()) return;
+
     const data = {
       id: this.editingId,
       ...this.newContact
     };
 
     this.service.updateContact(data).subscribe(() => {
-      this.showMessage("Updated ✅");
+
+      this.showMessage("Contact Updated Successfully ✅");
+
       this.loadContacts();
       this.resetForm();
+
     });
+
   }
+
+  // ================= DELETE =================
 
   deleteContact(id: number) {
-    if (!confirm("Delete contact?")) return;
+
+    if (!confirm("Are you sure you want to delete this contact?")) {
+      return;
+    }
 
     this.service.deleteContact(id).subscribe(() => {
-      this.showMessage("Deleted 🗑️");
+
+      this.showMessage("Contact Deleted 🗑️");
+
       this.loadContacts();
+
     });
+
   }
 
-  // UI
+  // ================= EXPORT CSV =================
+
+  exportCSV() {
+
+    if (this.contacts.length === 0) {
+      this.showMessage("No data to export ❌");
+      return;
+    }
+
+    const headers = ['ID', 'Name', 'Email', 'Phone', 'Category'];
+
+    const rows = this.contacts.map((c: any) => [
+      c.id,
+      c.name,
+      c.email,
+      c.phone,
+      c.category_name
+    ]);
+
+    let csvContent = '';
+
+    csvContent += headers.join(',') + '\n';
+
+    rows.forEach(row => {
+      csvContent += row.join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], {
+      type: 'text/csv;charset=utf-8;'
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = 'contacts.csv';
+
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+
+    this.showMessage("CSV Exported Successfully ✅");
+  }
+
+  // ================= UI =================
+
   showMessage(msg: string) {
+
     this.message = msg;
-    setTimeout(() => this.message = '', 3000);
+
+    setTimeout(() => {
+      this.message = '';
+    }, 3000);
+
   }
 
   resetForm() {
-    this.newContact = { name:'', email:'', phone:'', category_id:'' };
+
+    this.newContact = {
+      name: '',
+      email: '',
+      phone: '',
+      category_id: ''
+    };
+
     this.selectedFile = null;
     this.editingId = null;
-  }
-
-  // CSV
-  exportCSV() {
-    window.open('http://localhost/contact-manager-web-app/export_contacts.php');
   }
 
 }
