@@ -1,101 +1,268 @@
 <!-- LOGIN -->
-<div *ngIf="!isLoggedIn" class="login-box">
+<div *ngIf="!isLoggedIn" class="login-container">
 
-  <h2>Login</h2>
+  <div class="login-card">
 
-  <input placeholder="Email" [(ngModel)]="loginData.email">
-  <input type="password" placeholder="Password" [(ngModel)]="loginData.password">
+    <h1>Contact Manager</h1>
 
-  <button (click)="login()">Login</button>
+    <p class="subtitle">
+      Login to continue
+    </p>
 
-</div>
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="loginData.email"
+    >
 
+    <input
+      type="password"
+      placeholder="Password"
+      [(ngModel)]="loginData.password"
+    >
 
-<!-- MAIN APP -->
-<div *ngIf="isLoggedIn">
+    <button (click)="login()">
+      Login
+    </button>
 
-<h1>Contact Manager System</h1>
-
-<div class="top-buttons">
-  <button (click)="logout()">Logout</button>
-  <button (click)="addContact()">
-    {{ editingId ? 'Update Contact' : 'Add Contact' }}
-  </button>
-  <button (click)="exportCSV()">Export CSV</button>
-</div>
-
-<div class="cards">
-  <div class="card-box">
-    <h2>{{contacts.length}}</h2>
-    <p>Total Contacts</p>
   </div>
-  <div class="card-box">
-    <h2>{{categories.length}}</h2>
-    <p>Total Categories</p>
+
+</div>
+
+<!-- DASHBOARD -->
+<div *ngIf="isLoggedIn" class="dashboard">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <h1>Contact Manager Dashboard</h1>
+
+    <div class="top-buttons">
+
+      <button
+        class="logout-btn"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+
+      <button
+        class="add-btn"
+        (click)="addContact()"
+      >
+        {{ editingId ? 'Update Contact' : 'Add Contact' }}
+      </button>
+
+      <button
+        class="export-btn"
+        (click)="exportCSV()"
+      >
+        Export CSV
+      </button>
+
+    </div>
+
   </div>
-</div>
 
-<div class="form-container">
-  <input placeholder="Name" [(ngModel)]="newContact.name">
-  <input placeholder="Email" [(ngModel)]="newContact.email">
-  <input placeholder="Phone" [(ngModel)]="newContact.phone">
+  <!-- STATS -->
+  <div class="stats-wrapper">
 
-  <select [(ngModel)]="newContact.category_id">
-    <option value="">Select Category</option>
-    <option *ngFor="let c of categories" [value]="c.category_id">
-      {{c.category_name}}
-    </option>
-  </select>
+    <div class="card-box">
 
-  <input type="file" (change)="onFileChange($event)">
-</div>
+      <div class="card-icon">
+        👥
+      </div>
 
-<div class="search-filter-container">
-  <select [(ngModel)]="selectedCategory">
-    <option value="">All Categories</option>
-    <option *ngFor="let c of categories" [value]="c.category_name">
-      {{c.category_name}}
-    </option>
-  </select>
+      <div>
 
-  <input placeholder="Search..." [(ngModel)]="searchText">
-</div>
+        <h2>{{contacts.length}}</h2>
 
-<div *ngIf="message" class="toast">
-  {{message}}
-</div>
+        <p>Total Contacts</p>
 
-<table>
-<tr>
-<th>ID</th>
-<th>Image</th>
-<th>Name</th>
-<th>Email</th>
-<th>Phone</th>
-<th>Category</th>
-<th>Action</th>
-</tr>
+      </div>
 
-<tr *ngFor="let c of filteredContacts()">
+    </div>
 
-<td>{{c.id}}</td>
+    <div class="card-box">
 
-<td>
-<img *ngIf="c.image_path"
-[src]="'http://localhost/contact-manager-web-app/' + c.image_path">
-</td>
+      <div class="card-icon">
+        📁
+      </div>
 
-<td>{{c.name}}</td>
-<td>{{c.email}}</td>
-<td>{{c.phone}}</td>
-<td>{{c.category_name}}</td>
+      <div>
 
-<td>
-<button (click)="editContact(c)">Edit</button>
-<button (click)="deleteContact(c.id)">Delete</button>
-</td>
+        <h2>{{categories.length}}</h2>
 
-</tr>
-</table>
+        <p>Total Categories</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FORM -->
+  <div class="form-section">
+
+    <h2 class="section-title">
+      Add / Update Contact
+    </h2>
+
+    <div class="form-grid">
+
+      <input
+        placeholder="Name"
+        [(ngModel)]="newContact.name"
+      >
+
+      <input
+        placeholder="Email"
+        [(ngModel)]="newContact.email"
+      >
+
+      <input
+        placeholder="Phone Number"
+        [(ngModel)]="newContact.phone"
+      >
+
+      <select [(ngModel)]="newContact.category_id">
+
+        <option value="">
+          Select Category
+        </option>
+
+        <option
+          *ngFor="let c of categories"
+          [value]="c.category_id"
+        >
+          {{c.category_name}}
+        </option>
+
+      </select>
+
+      <input
+        type="file"
+        (change)="onFileChange($event)"
+      >
+
+    </div>
+
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-section">
+
+    <select [(ngModel)]="selectedCategory">
+
+      <option value="">
+        All Categories
+      </option>
+
+      <option
+        *ngFor="let c of categories"
+        [value]="c.category_name"
+      >
+        {{c.category_name}}
+      </option>
+
+    </select>
+
+    <input
+      placeholder="Search contacts..."
+      [(ngModel)]="searchText"
+    >
+
+  </div>
+
+  <!-- TOAST -->
+  <div
+    *ngIf="message"
+    class="toast"
+  >
+    {{message}}
+  </div>
+
+  <!-- LOADER -->
+  <div *ngIf="loading" class="loader-container">
+
+    <div class="loader"></div>
+
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div
+    *ngIf="!loading && filteredContacts().length === 0"
+    class="empty-state"
+  >
+
+    <h2>No Contacts Found</h2>
+
+    <p>
+      Try adding a new contact or changing search filters.
+    </p>
+
+  </div>
+
+  <!-- TABLE -->
+  <div
+    *ngIf="!loading && filteredContacts().length > 0"
+    class="table-container"
+  >
+
+    <table>
+
+      <tr>
+
+        <th>ID</th>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Category</th>
+        <th>Action</th>
+
+      </tr>
+
+      <tr *ngFor="let c of filteredContacts()">
+
+        <td>{{c.id}}</td>
+
+        <td>
+
+          <img
+            *ngIf="c.image_path"
+            [src]="'http://localhost/contact-manager-web-app/' + c.image_path"
+          >
+
+        </td>
+
+        <td>{{c.name}}</td>
+        <td>{{c.email}}</td>
+        <td>{{c.phone}}</td>
+        <td>{{c.category_name}}</td>
+
+        <td class="action-buttons">
+
+          <button
+            class="edit-btn"
+            (click)="editContact(c)"
+          >
+            Edit
+          </button>
+
+          <button
+            class="delete-btn"
+            (click)="deleteContact(c.id)"
+          >
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+
+    </table>
+
+  </div>
 
 </div>

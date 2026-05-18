@@ -7,7 +7,8 @@ import { ContactService } from './services/contact';
   selector: 'app-root',
   standalone: true,
   imports: [FormsModule, CommonModule],
-  templateUrl: './app.html'
+  templateUrl: './app.html',
+  styleUrls: ['./app.css']
 })
 export class AppComponent implements OnInit {
 
@@ -16,9 +17,12 @@ export class AppComponent implements OnInit {
 
   searchText: string = '';
   selectedCategory: string = '';
+
   message: string = '';
 
-  isLoggedIn: boolean = false;
+  loading = false;
+
+  isLoggedIn = false;
 
   loginData = {
     email: '',
@@ -47,12 +51,12 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // ================= LOGIN =================
+  /* ================= LOGIN ================= */
 
   login() {
 
     if (!this.loginData.email || !this.loginData.password) {
-      this.showMessage("Fill login fields ❌");
+      this.showMessage('Please fill login fields ❌');
       return;
     }
 
@@ -60,16 +64,18 @@ export class AppComponent implements OnInit {
 
       if (res.status === 'success') {
 
-        this.isLoggedIn = true;
         localStorage.setItem('user', 'logged');
+        this.isLoggedIn = true;
 
         this.loadContacts();
         this.loadCategories();
 
-        this.showMessage("Login Successful ✅");
+        this.showMessage('Login successful ✅');
 
       } else {
-        this.showMessage("Wrong email or password ❌");
+
+        this.showMessage('Invalid email or password ❌');
+
       }
 
     });
@@ -77,40 +83,60 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
+
     localStorage.removeItem('user');
-    this.isLoggedIn = false;
+    location.reload();
+
   }
 
-  // ================= LOAD DATA =================
+  /* ================= LOAD CONTACTS ================= */
 
   loadContacts() {
+
+    this.loading = true;
+
     this.service.getContacts().subscribe((res: any) => {
+
       this.contacts = res;
+
+      this.loading = false;
+
+    }, () => {
+
+      this.loading = false;
+
     });
+
   }
 
+  /* ================= LOAD CATEGORIES ================= */
+
   loadCategories() {
+
     this.service.getCategories().subscribe((res: any) => {
       this.categories = res;
     });
+
   }
 
-  // ================= SEARCH + FILTER =================
+  /* ================= FILTER ================= */
 
   filteredContacts() {
 
     return this.contacts.filter((c: any) => {
 
-      const s = this.searchText.toLowerCase();
+      const search = this.searchText.toLowerCase();
 
       const matchesSearch =
-        c.name?.toLowerCase().includes(s) ||
-        c.email?.toLowerCase().includes(s) ||
-        c.phone?.toLowerCase().includes(s);
+
+        c.name?.toLowerCase().includes(search) ||
+        c.email?.toLowerCase().includes(search) ||
+        c.phone?.toLowerCase().includes(search);
 
       const matchesCategory =
-        !this.selectedCategory ||
-        c.category_name?.trim() === this.selectedCategory;
+
+        this.selectedCategory === '' ||
+        c.category_name === this.selectedCategory;
 
       return matchesSearch && matchesCategory;
 
@@ -118,55 +144,71 @@ export class AppComponent implements OnInit {
 
   }
 
-  // ================= FILE =================
+  /* ================= FILE ================= */
 
   onFileChange(event: any) {
+
     this.selectedFile = event.target.files[0];
+
   }
 
-  // ================= VALIDATION =================
+  /* ================= VALIDATION ================= */
 
   validateForm(): boolean {
 
-    // Empty fields
     if (
-      !this.newContact.name ||
-      !this.newContact.email ||
-      !this.newContact.phone ||
+      !this.newContact.name.trim() ||
+      !this.newContact.email.trim() ||
+      !this.newContact.phone.trim() ||
       !this.newContact.category_id
     ) {
 
-      this.showMessage("All fields are required ❌");
+      this.showMessage('All fields are required ❌');
       return false;
+
     }
 
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailPattern.test(this.newContact.email)) {
-      this.showMessage("Invalid email format ❌");
+    if (!emailRegex.test(this.newContact.email)) {
+
+      this.showMessage('Invalid email format ❌');
       return false;
+
     }
 
-    // Phone validation
-    const phonePattern = /^[0-9]+$/;
+    const phoneRegex = /^[0-9]+$/;
 
-    if (!phonePattern.test(this.newContact.phone)) {
-      this.showMessage("Phone must contain numbers only ❌");
+    if (!phoneRegex.test(this.newContact.phone)) {
+
+      this.showMessage('Phone must contain numbers only ❌');
       return false;
+
+    }
+
+    const nameRegex = /^[a-zA-Z\s]+$/;
+
+    if (!nameRegex.test(this.newContact.name)) {
+
+      this.showMessage('Name must contain letters only ❌');
+      return false;
+
     }
 
     return true;
+
   }
 
-  // ================= ADD CONTACT =================
+  /* ================= ADD CONTACT ================= */
 
   addContact() {
 
-    if (!this.validateForm()) return;
-
     if (this.editingId) {
       this.updateContact();
+      return;
+    }
+
+    if (!this.validateForm()) {
       return;
     }
 
@@ -183,16 +225,17 @@ export class AppComponent implements OnInit {
 
     this.service.addContact(formData).subscribe(() => {
 
-      this.showMessage("Contact Added Successfully ✅");
+      this.showMessage('Contact added successfully ✅');
 
       this.loadContacts();
+
       this.resetForm();
 
     });
 
   }
 
-  // ================= EDIT =================
+  /* ================= EDIT ================= */
 
   editContact(c: any) {
 
@@ -205,14 +248,20 @@ export class AppComponent implements OnInit {
 
     this.editingId = c.id;
 
-    this.showMessage("Editing Contact ✏️");
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
   }
 
-  // ================= UPDATE =================
+  /* ================= UPDATE ================= */
 
   updateContact() {
 
-    if (!this.validateForm()) return;
+    if (!this.validateForm()) {
+      return;
+    }
 
     const data = {
       id: this.editingId,
@@ -221,26 +270,31 @@ export class AppComponent implements OnInit {
 
     this.service.updateContact(data).subscribe(() => {
 
-      this.showMessage("Contact Updated Successfully ✅");
+      this.showMessage('Contact updated successfully ✅');
 
       this.loadContacts();
+
       this.resetForm();
 
     });
 
   }
 
-  // ================= DELETE =================
+  /* ================= DELETE ================= */
 
   deleteContact(id: number) {
 
-    if (!confirm("Are you sure you want to delete this contact?")) {
+    const confirmDelete = confirm(
+      'Are you sure you want to delete this contact?'
+    );
+
+    if (!confirmDelete) {
       return;
     }
 
     this.service.deleteContact(id).subscribe(() => {
 
-      this.showMessage("Contact Deleted 🗑️");
+      this.showMessage('Contact deleted successfully ✅');
 
       this.loadContacts();
 
@@ -248,62 +302,18 @@ export class AppComponent implements OnInit {
 
   }
 
-  // ================= EXPORT CSV =================
+  /* ================= EXPORT CSV ================= */
 
   exportCSV() {
 
-    if (this.contacts.length === 0) {
-      this.showMessage("No data to export ❌");
-      return;
-    }
-
-    const headers = ['ID', 'Name', 'Email', 'Phone', 'Category'];
-
-    const rows = this.contacts.map((c: any) => [
-      c.id,
-      c.name,
-      c.email,
-      c.phone,
-      c.category_name
-    ]);
-
-    let csvContent = '';
-
-    csvContent += headers.join(',') + '\n';
-
-    rows.forEach(row => {
-      csvContent += row.join(',') + '\n';
-    });
-
-    const blob = new Blob([csvContent], {
-      type: 'text/csv;charset=utf-8;'
-    });
-
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-
-    a.href = url;
-    a.download = 'contacts.csv';
-
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-
-    this.showMessage("CSV Exported Successfully ✅");
-  }
-
-  // ================= UI =================
-
-  showMessage(msg: string) {
-
-    this.message = msg;
-
-    setTimeout(() => {
-      this.message = '';
-    }, 3000);
+    window.open(
+      'http://localhost/contact-manager-web-app/export_contacts.php',
+      '_blank'
+    );
 
   }
+
+  /* ================= RESET ================= */
 
   resetForm() {
 
@@ -315,7 +325,21 @@ export class AppComponent implements OnInit {
     };
 
     this.selectedFile = null;
+
     this.editingId = null;
+
+  }
+
+  /* ================= TOAST ================= */
+
+  showMessage(msg: string) {
+
+    this.message = msg;
+
+    setTimeout(() => {
+      this.message = '';
+    }, 3000);
+
   }
 
 }
