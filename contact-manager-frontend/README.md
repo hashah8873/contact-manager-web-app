@@ -1,59 +1,273 @@
-# ContactManagerFrontend
+# 📌 Contact Manager Web Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+## 📖 Project Overview
 
-## Development server
+The Contact Manager Web Application is a full-stack web application developed as a Capstone Project.
 
-To start a local development server, run:
+The main goal of this project is to help users store and manage their contact information in one centralized and organized system instead of using paper notes or multiple disconnected tools.
+
+The application allows users to create, manage, search, filter, update, and delete contacts through a modern and responsive dashboard interface.
+
+---
+
+# ✨ Main Features
+
+## 🔐 Authentication System
+
+- Secure login system
+- Session handling using Local Storage
+- Login validation and error handling
+
+---
+
+## 👥 Contact Management
+
+- Add new contacts
+- Edit existing contacts
+- Delete contacts
+- View all contacts
+- Upload contact images
+
+---
+
+## 🔍 Search & Filter
+
+- Search contacts by:
+  - Name
+  - Email
+  - Phone Number
+
+- Filter contacts by category
+
+---
+
+## 📁 Categories
+
+- Organize contacts into categories
+- Dynamic category loading from database
+
+---
+
+## 📤 Export System
+
+- Export contacts to CSV file
+
+---
+
+## 📊 Dashboard
+
+- Total Contacts statistics card
+- Total Categories statistics card
+- Responsive modern dashboard UI
+
+---
+
+## ✅ Validation & Error Handling
+
+- Required field validation
+- Email format validation
+- Phone number validation
+- Name validation
+- Delete confirmation popup
+- Success and error toast messages
+
+---
+
+## 🎨 UI/UX Improvements
+
+- Responsive design
+- Professional dashboard layout
+- Modern cards and buttons
+- Loading spinner animation
+- Empty state UI
+- Hover animations and transitions
+
+---
+
+# 🛠 Technologies Used
+
+## Frontend
+
+- Angular
+- TypeScript
+- HTML
+- CSS
+
+---
+
+## Backend
+
+- PHP
+- MySQL
+
+---
+
+## Development Tools
+
+- XAMPP
+- Git & GitHub
+- Angular CLI
+- VS Code
+- Adobe XD
+
+---
+
+# 🧠 System Workflow
+
+1. User logs into the system
+2. Angular frontend communicates with PHP backend APIs
+3. PHP APIs connect to MySQL database
+4. Contact data is stored and retrieved dynamically
+5. Users can perform full CRUD operations
+6. Images are uploaded and displayed from the uploads folder
+
+---
+
+# 📂 Project Structure
+
+```bash
+contact-manager-web-app/
+│
+├── api_add_contact.php
+├── api_get_contacts.php
+├── api_update_contact.php
+├── api_delete_contact.php
+├── api_get_categories.php
+├── export_contacts.php
+├── login.php
+├── uploads/
+│
+└── contact-manager-frontend/
+    │
+    ├── src/
+    │   ├── app/
+    │   │   ├── app.ts
+    │   │   ├── app.html
+    │   │   ├── app.css
+    │   │   └── services/
+    │   │       └── contact.ts
+```
+
+---
+
+# ▶️ How to Run the Project
+
+## 1️⃣ Start XAMPP
+
+- Open XAMPP Control Panel
+- Start:
+  - Apache
+  - MySQL
+
+---
+
+## 2️⃣ Place Project Folder
+
+Move the project folder into:
+
+```bash
+htdocs/
+```
+
+Example:
+
+```bash
+/Applications/XAMPP/xamppfiles/htdocs/
+```
+
+---
+
+## 3️⃣ Database Setup
+
+Open phpMyAdmin and create a database named:
+
+```bash
+contact_manager
+```
+
+Import the required tables:
+
+- contacts1
+- categories
+
+---
+
+## 4️⃣ Run Angular Frontend
+
+Open terminal:
+
+```bash
+cd /Applications/XAMPP/xamppfiles/htdocs/contact-manager-web-app/contact-manager-frontend
+```
+
+Then run:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 5️⃣ Open the Application
 
 ```bash
-ng generate component component-name
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
+
+# 🔑 Demo Login Credentials
 
 ```bash
-ng generate --help
+Email: hiba@gmail.com
+Password: 123123
 ```
 
-## Building
+---
 
-To build the project run:
+# 📸 Project Screenshots
 
-```bash
-ng build
-```
+The project includes:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Login Page
+- Dashboard
+- Contact Table
+- Add Contact Form
+- Validation Messages
+- Empty State UI
+- Loading Spinner
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+# 🚀 Future Improvements
 
-```bash
-ng test
-```
+- Deploy application online
+- Add user registration system
+- Add pagination
+- Add dark mode
+- Add advanced analytics
+- Improve backend security
+- Add cloud image storage
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+# 🎯 Learning Outcomes
 
-```bash
-ng e2e
-```
+Through this project, the following skills were strengthened:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- Frontend development using Angular
+- Backend development using PHP
+- Database management with MySQL
+- API integration
+- Form validation
+- Responsive UI design
+- GitHub version control
+- Full-stack application architecture
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+# 👩‍💻 Author
+
+Hiba Abo Shawish
+
+Capstone Project – Web & Mobile Development
